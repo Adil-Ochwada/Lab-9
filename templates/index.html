@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Computer Expenses</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Computer Component Expenses</h1>
+
+        <div class="form-section">
+            <input id="part" placeholder="Component Name" />
+            <input id="price" type="number" step="0.01" placeholder="Price (Rubles)" />
+            <button onclick="addComponent()">Add</button>
+            <button onclick="clearAll()">Clear</button>
+        </div>
+
+        <ul class="item-list">
+            {% for item in components %}
+                <li>{{ item.hardware_part }} — {{ "%.2f"|format(item.price) }} Rubles</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Total: {{ "%.2f"|format(total) }} Rubles</h3>
+    </div>
+
+    <script>
+        function addComponent() {
+            const part = document.getElementById('part').value;
+            const price = parseFloat(document.getElementById('price').value);
+
+            fetch('/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hardware_part: part, price: price })
+            }).then(() => window.location.reload());
+        }
+
+        function clearAll() {
+            fetch('/clear', { method: 'POST' })
+                .then(() => window.location.reload());
+        }
+    </script>
+</body>
+</html>
